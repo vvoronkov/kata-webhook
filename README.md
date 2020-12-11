@@ -10,8 +10,7 @@ Kubernetes YAML files required to instantiate the admission
 controller.
 
 ```bash
-$ cp -a ../vendor .
-$ podman build -t katadocker/kata-webhook-example:latest .
+$ podman build -t katadocker/kata-webhook-example:latest -f Dockerfile
 $ ./create_certs.sh
 ```
 
