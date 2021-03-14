@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: pod-annotate-webhook
-          image: quay.io/fidencio/kata-webhook-example:latest
+          image: quay.io/fidencio/kata-webhook-example@sha256:b8cfda321fdd99781b008dea1663e02e287e769330aa31331274b5966da63036
           imagePullPolicy: Always
           args:
             - -tls-cert-file=/etc/webhook/certs/cert.pem
