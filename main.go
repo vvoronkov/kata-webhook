@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+    "regexp"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -37,9 +38,27 @@ func annotatePodMutator(ctx context.Context, obj metav1.Object) (bool, error) {
 	// specially when operators create the pods. Hence access
 	// the Namespace in the actual request (vs the object)
 	// https://godoc.org/k8s.io/api/admission/v1beta1#AdmissionRequest
+
+	for k, v := range nsBlacklist {
+        fmt.Printf("key[%s] value[%s]\n", k, v)
+		match, _ := regexp.MatchString(k, request.Namespace)
+
+        if match {
+            fmt.Println("blacklisted namespace: ", request.Namespace)
+            return false, nil
+        }
+    }
+
 	if whPolicy.nsBlacklist[request.Namespace] {
 		fmt.Println("blacklisted namespace: ", request.Namespace)
 		return false, nil
+	}
+
+    if validRegex != nil {
+		if !validRegex.MatchString(request.Namespace) {
+			fmt.Println("namespace doesn't match regex expression", request.Namespace)
+			return false, nil
+		}
 	}
 
 	// We cannot support --net=host in Kata
@@ -76,6 +95,7 @@ type config struct {
 	certFile    string
 	keyFile     string
 	nsBlacklist string
+	regexStr    string
 }
 
 type policy struct {
@@ -83,6 +103,7 @@ type policy struct {
 }
 
 var whPolicy *policy
+var validRegex *regexp.Regexp
 
 func initFlags() *config {
 	cfg := &config{}
@@ -90,7 +111,8 @@ func initFlags() *config {
 	fl := flag.NewFlagSet(os.Args[0], flag.ExitOnError)
 	fl.StringVar(&cfg.certFile, "tls-cert-file", "", "TLS certificate file")
 	fl.StringVar(&cfg.keyFile, "tls-key-file", "", "TLS key file")
-	fl.StringVar(&cfg.nsBlacklist, "exclude-namespaces", "", "Comma separated namespace blacklist")
+	fl.StringVar(&cfg.nsBlacklist, "exclude-regex-namespaces", "", "Comma separated namespace blacklist")
+    fl.StringVar(&cfg.regexStr, "regex-matching-namespaces", "", "regex string, will mutate only on matching namespaces, blacklisted namespaces will be ingnored")
 
 	fl.Parse(os.Args[1:])
 	return cfg
@@ -107,6 +129,11 @@ func main() {
 		for _, s := range strings.Split(cfg.nsBlacklist, ",") {
 			whPolicy.nsBlacklist[s] = true
 		}
+	}
+
+	if cfg.regexStr != "" {
+		// panic on invalid expression
+		validRegex = regexp.MustCompile(cfg.regexStr)
 	}
 
 	// Create our mutator
