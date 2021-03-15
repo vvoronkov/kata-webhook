@@ -39,7 +39,7 @@ func annotatePodMutator(ctx context.Context, obj metav1.Object) (bool, error) {
 	// the Namespace in the actual request (vs the object)
 	// https://godoc.org/k8s.io/api/admission/v1beta1#AdmissionRequest
 
-	for k, v := range nsBlacklist {
+	for k, v := range whPolicy.nsBlacklist {
         fmt.Printf("key[%s] value[%s]\n", k, v)
 		match, _ := regexp.MatchString(k, request.Namespace)
 
