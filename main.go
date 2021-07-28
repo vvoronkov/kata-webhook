@@ -15,7 +15,7 @@ import (
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
+    v1beta1 "/k8s.io/api/admission/v1beta1"
 	whhttp "github.com/slok/kubewebhook/pkg/http"
 	"github.com/slok/kubewebhook/pkg/log"
 	mctx "github.com/slok/kubewebhook/pkg/webhook/context"
@@ -84,6 +84,16 @@ func annotatePodMutator(ctx context.Context, obj metav1.Object) (bool, error) {
 
 	// Mutate the pod
 	fmt.Println("setting runtime to kata: ", pod.GetNamespace(), pod.GetName())
+
+    // Create a response to return to the Kubernetes API
+    ar := v1beta1.AdmissionReview{
+      Response: &v1beta1.AdmissionResponse{
+        Allowed: true,
+//         Result: &metav1.Status{
+//           Message: "Mutated successfully!",
+//         },
+      },
+    }
 
 	kataRuntimeClassName := "kata"
 	pod.Spec.RuntimeClassName = &kataRuntimeClassName
