@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-apiVersion: admissionregistration.k8s.io/v1beta1
+apiVersion: admissionregistration.k8s.io/v1
 kind: MutatingWebhookConfiguration
 metadata:
   name: pod-annotate-webhook
@@ -11,6 +11,8 @@ metadata:
     kind: mutator
 webhooks:
   - name: pod-annotate-webhook.kata.xyz
+    sideEffects: None
+    admissionReviewVersions: ["v1"]
     clientConfig:
       service:
         name: pod-annotate-webhook
