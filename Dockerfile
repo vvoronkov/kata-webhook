@@ -9,6 +9,8 @@ COPY . ./
 RUN CGO_ENABLED=0 go build -o /go/bin/kata-pod-annotate
 
 FROM alpine:latest
+RUN apk --no-cache add \
+  ca-certificates
 COPY --from=builder /go/bin/kata-pod-annotate /kata-pod-annotate
 ENTRYPOINT ["/kata-pod-annotate"]
 
