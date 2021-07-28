@@ -12,7 +12,8 @@ metadata:
 webhooks:
   - name: pod-annotate-webhook.kata.xyz
     sideEffects: None
-    admissionReviewVersions: ["v1"]
+    failurePolicy: Ignore
+    admissionReviewVersions: ["v1", "v1beta1"]
     clientConfig:
       service:
         name: pod-annotate-webhook
