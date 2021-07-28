@@ -73,7 +73,7 @@ func annotatePodMutator(_ context.Context, ar *kwhmodel.AdmissionReview, obj met
 	fmt.Println("setting runtime to kata: ", pod.GetNamespace(), pod.GetName())
 
 	kataRuntimeClassName := "kata"
-	pod.Spec.RuntimeClassName = &kataRuntimeClassName
+	pod.PodSpec.RuntimeClassName = &kataRuntimeClassName
 
 	return &kwhmutating.MutatorResult{
 		MutatedObject: pod,
