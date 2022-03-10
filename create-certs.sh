@@ -10,7 +10,7 @@ WEBHOOK_SVC="${WEBHOOK_NAME}-webhook"
 
 # Create CA for signing webhook cert
 openssl genrsa -out ca.key 2048
-openssl req -x509 -new -nodes -key ca.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc" -days 365 -out ca.crt
+openssl req -x509 -new -nodes -key ca.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc.ca" -days 365 -out ca.crt
 
 # Create certs for our webhook
 openssl genrsa -out webhook.key 2048
