@@ -29,4 +29,4 @@ CA_BUNDLE=$(cat ca.crt webhook.crt | base64 -w0)
 sed -e "s/PROJECT_NAMESPACE/${WEBHOOK_NS}/" -e "s/CA_BUNDLE/${CA_BUNDLE}/" ./deploy/webhook-registration.yaml.tpl > ./deploy/webhook-registration.yaml
 
 # Clean
-rm ./webhookCA* && rm ./webhook.crt
+rm ./ca* && rm webhook.key webhook.csr webhook.crt
