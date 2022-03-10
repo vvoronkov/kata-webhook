@@ -15,7 +15,7 @@ openssl req -x509 -new -nodes -key ca.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS
 # Create certs for our webhook
 openssl genrsa -out webhook.key 2048
 openssl req -new -key ./webhook.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc" -out ./webhook.csr
-openssl x509 -req -days 365 -in webhook.csr -CA ca.crt -CAkey ca.key -out webhook.crt
+openssl x509 -req -days 365 -in webhook.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out webhook.crt
 
 # Create certs secrets for k8s
 kubectl create -n ${WEBHOOK_NS} secret generic \
