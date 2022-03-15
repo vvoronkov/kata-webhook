@@ -25,7 +25,7 @@ kubectl create -n ${WEBHOOK_NS} secret generic \
     --dry-run -o yaml > ./deploy/webhook-certs.yaml
 
 # Set the CABundle on the webhook registration
-CA_BUNDLE=$(cat ca.crt webhook.crt | base64 -w0)
+CA_BUNDLE=$(cat ca.crt | base64 -w0)
 sed -e "s/PROJECT_NAMESPACE/${WEBHOOK_NS}/" -e "s/CA_BUNDLE/${CA_BUNDLE}/" ./deploy/webhook-registration.yaml.tpl > ./deploy/webhook-registration.yaml
 
 # Clean
