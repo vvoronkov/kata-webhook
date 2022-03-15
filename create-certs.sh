@@ -20,8 +20,8 @@ openssl x509 -req -days 365 -in webhook.csr -CA webhookCA.crt -CAkey webhookCA.k
 # Create certs secrets for k8s
 kubectl create -n ${WEBHOOK_NS} secret generic \
     ${WEBHOOK_SVC}-certs \
-    --from-file=key.pem=./webhookCA.key \
-    --from-file=cert.pem=./webhookCA.crt \
+    --from-file=key.pem=./webhook.key \
+    --from-file=cert.pem=./webhook.crt \
     --dry-run -o yaml > ./deploy/webhook-certs.yaml
 
 # Set the CABundle on the webhook registration
