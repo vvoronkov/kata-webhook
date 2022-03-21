@@ -10,11 +10,16 @@ WEBHOOK_SVC="${WEBHOOK_NAME}-webhook"
 
 # Create CA for signing webhook cert
 openssl genrsa -out webhookCA.key 2048
-openssl req -x509 -new -nodes -key webhookCA.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc.ca" -days 365 -out webhookCA.crt
+openssl req -x509 -new -nodes -key webhookCA.key \
+    -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc.ca" \
+    -addext "subjectAltName = DNS:${WEBHOOK_SVC}.${WEBHOOK_NS}.svc.ca" \
+    -days 365 -out webhookCA.crt
 
 # Create certs for our webhook
 openssl genrsa -out webhook.key 2048
-openssl req -new -key ./webhook.key -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc" -out ./webhook.csr
+openssl req -new -key ./webhook.key \
+    -subj "/CN=${WEBHOOK_SVC}.${WEBHOOK_NS}.svc" \
+    -addext "subjectAltName = DNS:${WEBHOOK_SVC}.${WEBHOOK_NS}.svc" -out ./webhook.csr
 openssl x509 -req -days 365 -in webhook.csr -CA webhookCA.crt -CAkey webhookCA.key -CAcreateserial -out webhook.crt
 
 # Create certs secrets for k8s
